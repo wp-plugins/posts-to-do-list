@@ -6,16 +6,23 @@ Tested up to: 3.4.1
 Stable tag: 0.7
 Requires at least: 3.0
 
-Share post ideas with your blog writers, suggest them what to write and keep track of all the posts ideas with a convenient to do list. Stop losing post ideas, start keeping them!
+Share post ideas with blog writers, suggest them what to write and keep track of the posts ideas with a to do list. Stop losing post ideas, start keeping them!
 
 == Description ==
 Most people who run a multi-author blog need to tell their writers what post they should write. And so administrators send emails with a URL of the post source, the keyword for the post, any notes accompanying that. And sometimes a user notices a post that is worth writing and he wants to tell the other writers, so they have to email the administrator who will tell the other users and everyone will kill themselves in the end. The Posts To Do List plugin allows you to get rid of that rigmarole.
 
-By a convenient box in the posts editing page, everyone will be able to share the posts they think are worth writing. You have this little box, where you put the URL of the page where you read that great post, and the plugin will fetch the title by itself. You will then be able to change the retrieved title, suggest a keyword and add other notes, set a priority and assign the post to some user of the blog. And if you want to leave everything blank but the title field, leaving a suggestion that anyone can catch and deepen... well, you can!
+By a convenient box in the posts editing page, **everyone will be able to share the posts they think are worth writing. You have this little box, where you put the URL of the page where you read that great post, and the plugin will fetch the title by itself. You will then be able to change the retrieved title, suggest a keyword and add other notes, set a priority and assign the post to some user of the blog.** And if you want to leave everything blank but the title field, leaving a suggestion that anyone can catch and deepen... well, you can!
 
 No more emails to tell "You do this and that, use this keyword and don't forget that...". Everything can be down inside Wordpress. Not only by the administrator, but by any logged in user.
 
-You, as the administrator, want everything in the power of your hand? No problem, you can decide what user roles can add new posts to the to do list and what user roles can delete already added items. You want your users to stick to the post you assigned to them? You can hide the posts you have assigned to other users from their view. From a simple stats page it will be immediately clear how many posts you have already assigned and how many of them are still to do, so that it will be easy to understand how much your writers have done and how many posts you have still to assign. Almost every action is powered by AJAX, so that no page reloads are needed and you do not even notice it is happening, it just works. What do you want more? Cause we even have cookies!
+You, as the administrator, want everything in the power of your hand? No problem, you can **decide what user roles can add new posts to the to do list and what user roles can delete already added items.** You want your users to stick to the post you assigned to them? You can hide the posts you have assigned to other users from their view. From a **simple stats page** it will be immediately clear how many posts you have already assigned and how many of them are still to do, so that it will be easy to understand how much your writers have done and how many posts you have still to assign. Almost every action is powered by AJAX, so that no page reloads are needed and you do not even notice it is happening, it just works. What do you want more? Cause we even have cookies!
+
+Posts To Do List was reviewed by:
+  
+* [IdeaGeek](http://www.ideageek.it/organizzare-post-wordpress-facile-con-posts-to-do-list "IdeaGeek")
+* [Mondofico](http://www.mondofico.com/2012/09/gestione-post-da-fare-wordpress-posts-to-do-list "Mondofico").
+* [Wordpress Style](http://www.wpstyle.it/plugin-wordpress/gestire-i-post-da-fare-con-posts-to-do-list.html "Wordpress Style").
+* [WpCode.net ENG](http://www.wpcode.net/to-do-list.html/ "WpCode.net ENG").
 
 == Installation ==
 1. Upload the directory of the Posts To Do List in your wp-content/plugins directory; note that you need the whole folder, not only the single files.
