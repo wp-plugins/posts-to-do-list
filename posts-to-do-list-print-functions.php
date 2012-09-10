@@ -111,7 +111,7 @@ function posts_to_do_list_print_new_item_form() {
             <div class="item_to_do_content" style="display: none; margin-left: 10px;">
                 <div class="content_left" style="margin-top: 2px;">
                     <strong>Inserted</strong>: on <?php echo $item_date_added; ?> by <?php echo $item_adder; ?><br />
-                    <strong>Assigned to</strong>: <?php echo $item_author; ?><br />
+                    <strong>Assigned to</strong>: <span class="assigned"><?php echo $item_author; ?></span><br />
                     <strong>Priority</strong>: <?php echo $item_priority; ?><br />
                     <strong>Keyword</strong>: <?php echo $item_keyword; ?><br />
                     <strong>Notes</strong>: <?php echo $item_notes; ?><br />
@@ -135,7 +135,22 @@ function posts_to_do_list_print_new_item_form() {
                     <div style="float: right; width: 50%;">
                         &rArr; &nbsp;Mark as done <input type="checkbox" name="mark_as_done" class="mark_as_done" value="<?php echo $single->ID; ?>"<?php echo @$done_checked; ?> /><br />
                         
-        <?php //If current user belong to a user role that can delete items, show link
+                        <?php if( $single->item_author != $current_user->ID ) { ?>
+                        
+                        &rArr; &nbsp;<a href="#" class="item_i_ll_take_it" title="If you plan to write this post, assign it to yourself so that other writers will not start writing it too" rel="<?php echo $single->ID; ?>">Assign to me</a>
+                        
+                        <?php } else if( $single->item_author == $current_user->ID AND array_intersect( parent::$posts_to_do_list_options['permission_item_unassign_roles'], get_userdata( $current_user->ID )->roles ) ) { ?>
+                        
+                        &rArr; &nbsp;<a href="#" class="item_i_dont_want_it_anymore" title="If you are not going to write this, you can leave it 'Unassigned'" rel="<?php echo $single->ID; ?>">Unassign from me</a>
+                        
+                            <?php } ?>
+                            
+                    </div>
+                    <div style="clear: both;"></div>
+                    <div style="margin: 0 auto; width: 50%">
+                    
+        <?php
+        //If current user belong to a user role that can delete items, show link
         if( array_intersect( parent::$posts_to_do_list_options['permission_item_delete_roles'], get_userdata( $current_user->ID )->roles ) ) { ?>
                         
                         &rArr; &nbsp;<a href="#" class="item_delete" title="Delete this item" rel="<?php echo $single->ID; ?>">Delete item</a>

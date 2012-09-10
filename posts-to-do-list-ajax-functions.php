@@ -73,11 +73,34 @@ class posts_to_do_list_ajax_functions extends posts_to_do_list_core {
         //If request was really issued from the plugin
         check_ajax_referer( 'posts_to_do_list_ajax_delete_item', 'nonce' );
         
-        $wpdb->prepare( $wpdb->query( 'DELETE FROM '.self::$posts_to_do_list_db_table.' WHERE ID = '.(int) $_REQUEST['item_id'] ) );
+        $wpdb->query( $wpdb->prepare( 'DELETE FROM '.self::$posts_to_do_list_db_table.' WHERE ID = '.(int) $_REQUEST['item_id'] ) );
         exit;
     }
     
-    //Performs little cleaning of the given values, then add the new item
+    //Assign an item to current user
+    function posts_to_do_list_ajax_i_ll_take_it() {
+        global  $wpdb,
+                $current_user;
+        
+        //If request was really issued from the plugin
+        check_ajax_referer( 'posts_to_do_list_ajax_i_ll_take_it', 'nonce' );
+        
+        $wpdb->query( $wpdb->prepare( 'UPDATE '.self::$posts_to_do_list_db_table.' SET item_author = '.$current_user->ID.' WHERE ID = '.$_REQUEST['item_id'] ) );
+        exit;
+    }
+    
+    //Unassign an item fron current user
+    function posts_to_do_list_ajax_i_dont_want_it_anymore() {
+        global $wpdb;
+        
+        //If request was really issued from the plugin
+        check_ajax_referer( 'posts_to_do_list_ajax_i_dont_want_it_anymore', 'nonce' );
+        
+        $wpdb->query( $wpdb->prepare( 'UPDATE '.self::$posts_to_do_list_db_table.' SET item_author = 0 WHERE ID = '.$_REQUEST['item_id'] ) );
+        exit;
+    }
+    
+    //Perform a bit of cleaning of the given values, then add the new item
     function posts_to_do_list_ajax_new_item_add() {
         global $wpdb;
         

@@ -4,7 +4,7 @@ Plugin Name: Posts To Do List
 Plugin URI: http://www.thecrowned.org/posts-to-do-list
 Description: Share post ideas with your blog writers, suggest them what to write and keep track of all the posts ideas in a convenient to do list. Do not lose post ideas, keep them!
 Author: Stefano Ottolenghi
-Version: 0.7
+Version: 0.8
 Author URI: http://www.thecrowned.org/
 */
 
@@ -33,7 +33,7 @@ class posts_to_do_list_core {
         global $wpdb;
         
         self::$posts_to_do_list_ajax_loader = plugins_url( 'style/images/ajax-loader.gif', __FILE__ );
-        self::$newest_version               = '0.7';
+        self::$newest_version               = '0.8';
         self::$posts_to_do_list_db_table    = $wpdb->prefix.'posts_to_do_list';
         
         //If table does not exist, create it 
@@ -88,6 +88,8 @@ class posts_to_do_list_core {
         add_action( 'wp_ajax_posts_to_do_list_ajax_mark_as_done', array( 'posts_to_do_list_ajax_functions', 'posts_to_do_list_ajax_mark_as_done' ) );
         add_action( 'wp_ajax_posts_to_do_list_ajax_get_page', array( 'posts_to_do_list_ajax_functions', 'posts_to_do_list_ajax_get_page' ) );
         add_action( 'wp_ajax_posts_to_do_list_ajax_delete_item', array( 'posts_to_do_list_ajax_functions', 'posts_to_do_list_ajax_delete_item' ) );
+        add_action( 'wp_ajax_posts_to_do_list_ajax_i_ll_take_it', array( 'posts_to_do_list_ajax_functions', 'posts_to_do_list_ajax_i_ll_take_it' ) );
+        add_action( 'wp_ajax_posts_to_do_list_ajax_i_dont_want_it_anymore', array( 'posts_to_do_list_ajax_functions', 'posts_to_do_list_ajax_i_dont_want_it_anymore' ) );
     }
     
     function posts_to_do_list_update_routine() {
@@ -222,6 +224,8 @@ class posts_to_do_list_core {
             'current_user_display_name'                             => $current_user->display_name,
             'current_date'                                          => date( 'd/m/Y' ),
             'nonce_posts_to_do_list_ajax_mark_as_done'              => wp_create_nonce( 'posts_to_do_list_ajax_mark_as_done' ),
+            'nonce_posts_to_do_list_ajax_i_ll_take_it'              => wp_create_nonce( 'posts_to_do_list_ajax_i_ll_take_it' ),
+            'nonce_posts_to_do_list_ajax_i_dont_want_it_anymore'    => wp_create_nonce( 'posts_to_do_list_ajax_i_dont_want_it_anymore' ),
             'nonce_posts_to_do_list_ajax_delete_item'               => wp_create_nonce( 'posts_to_do_list_ajax_delete_item' ),
             'nonce_posts_to_do_list_ajax_get_page'                  => wp_create_nonce( 'posts_to_do_list_ajax_get_page' ),
             'nonce_posts_to_do_list_ajax_retrieve_title'            => wp_create_nonce( 'posts_to_do_list_ajax_retrieve_title' ),
@@ -374,16 +378,21 @@ class posts_to_do_list_core {
         //Permissions box: for the roles, it cycles through the POST data and find all the fields that were sent to add them to the serialized array
         $permission_new_item_add_roles  = array();
         $permission_item_delete_roles   = array();
+        $permission_item_unassign_roles = array();
         foreach( $_POST as $key => $value ) {
             if( strpos( $key, 'permission_new_item_add_' ) === 0 )
                 $permission_new_item_add_roles[] = $value;
                 
             if( strpos( $key, 'permission_item_delete_' ) === 0 )
                 $permission_item_delete_roles[] = $value;
+            
+            if( strpos( $key, 'permission_item_unassign_' ) === 0 )
+                $permission_item_unassign_roles[] = $value;
         }
         
         $new_settings['permission_new_item_add_roles']          = $permission_new_item_add_roles;
         $new_settings['permission_item_delete_roles']           = $permission_item_delete_roles;
+        $new_settings['permission_item_unassign_roles']         = $permission_item_unassign_roles;
         $new_settings['permission_users_can_see_others_items']  = posts_to_do_list_options_functions::determine_checkbox_value( @$_POST['permission_users_can_see_others_items'] );
         
         //Options update
@@ -505,7 +514,20 @@ class posts_to_do_list_core {
             
             echo '<p style="height: 10px;"><label><input type="checkbox" name="permission_item_delete_'.$key.'" value="'.$key.'"'.@$checked.' /> '.$value.'</label></p>';
             unset( $checked );
-        } 
+        } ?>
+        
+        <span class="tooltip_span">
+            <img src="<?php echo plugins_url( 'style/images/info.png', __FILE__ ); ?>" title="Only users belonging to one of the checked user roles will be able to unassign items assigned to them." class="tooltip_container" />
+        </span>
+        <div class="section_title">User roles allowed to unassign posts assigned to them</div>
+        
+        <?php foreach( $wp_roles->role_names as $key => $value ) {
+            if( in_array( $key, self::$posts_to_do_list_options['permission_item_unassign_roles'] ) )
+                $checked = ' checked="checked"';
+            
+            echo '<p style="height: 10px;"><label><input type="checkbox" name="permission_item_unassign_'.$key.'" value="'.$key.'"'.@$checked.' /> '.$value.'</label></p>';
+            unset( $checked );
+        }
     }
     
     function posts_to_do_list_metabox_reset() { ?>

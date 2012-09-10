@@ -14,6 +14,28 @@ jQuery(document).ready(function($) {
         $("#posts_to_do_list_content").css("background-repeat", "");
     }
     
+    //Ajax call to reload current page (used for example when deleting items, (un)assigning items
+    function posts_to_do_list_reload_current_page() {
+        var current_page = Number($("#posts_to_do_list_current_page").text());
+        var data = {
+            action:                 "posts_to_do_list_ajax_get_page",
+            posts_to_do_list_page:  current_page,
+            nonce:                  posts_to_do_list_vars.nonce_posts_to_do_list_ajax_get_page
+        };
+        
+        $.post(decodeURIComponent(posts_to_do_list_vars.ajax_url), data, function(response) {
+            if(response.indexOf("Error:") != -1) {
+                $("#posts_to_do_list_content_error").html(response.substr(6));
+                $("#posts_to_do_list_content_error").css("display", "block");
+            } else {
+                $("#posts_to_do_list_content").html(response);
+            }
+            
+            posts_to_do_list_content_loading_clear();
+            
+        });
+    }
+    
     //On title click, expand content and change background
     $("#posts_to_do_list_content").delegate(".item_to_do_link", "click", function (e) {
         
@@ -67,9 +89,72 @@ jQuery(document).ready(function($) {
         });
     });
     
+    //Assigning an item to one's self
+    $("#posts_to_do_list_content").delegate(".item_i_ll_take_it", "click", function(e) {
+        e.preventDefault();
+        
+        posts_to_do_list_content_loading();
+        
+        var clicked_item    = $(this);
+        var data            = {
+            action:     "posts_to_do_list_ajax_i_ll_take_it",
+            item_id:    clicked_item.attr("rel"),
+            nonce:      posts_to_do_list_vars.nonce_posts_to_do_list_ajax_i_ll_take_it
+        };
+            
+        $.post(decodeURIComponent(posts_to_do_list_vars.ajax_url), data, function(response) {
+            
+            if(response.length > 0) {
+                $("#posts_to_do_list_content_error").html(response);
+                $("#posts_to_do_list_content_error").css("display", "block");
+            } else {
+                //clicked_item.closest(".item_to_do_content").find(".assigned").html(posts_to_do_list_vars.current_user_display_name);
+                //clicked_item.closest(".item_to_do").find(".item_to_do_link").prepend("* ");
+                posts_to_do_list_reload_current_page();
+            }
+        
+            posts_to_do_list_content_loading_clear();
+        
+        });
+    });
+    
+    //Unassigning an item from one's self
+    $("#posts_to_do_list_content").delegate(".item_i_dont_want_it_anymore", "click", function(e) {
+        e.preventDefault();
+        
+        posts_to_do_list_content_loading();
+        
+        var clicked_item    = $(this);
+        var data            = {
+            action:     "posts_to_do_list_ajax_i_dont_want_it_anymore",
+            item_id:    clicked_item.attr("rel"),
+            nonce:      posts_to_do_list_vars.nonce_posts_to_do_list_ajax_i_dont_want_it_anymore
+        };
+            
+        $.post(decodeURIComponent(posts_to_do_list_vars.ajax_url), data, function(response) {
+            
+            if(response.length > 0) {
+                $("#posts_to_do_list_content_error").html(response);
+                $("#posts_to_do_list_content_error").css("display", "block");
+            } else {
+                //clicked_item.closest(".item_to_do_content").find(".assigned").html("Unassigned");
+                //var title = clicked_item.closest(".item_to_do").find(".item_to_do_link").html();
+                //clicked_item.closest(".item_to_do").find(".item_to_do_link").html(title.substring(2, title.length));
+                posts_to_do_list_reload_current_page();
+            }
+        
+            posts_to_do_list_content_loading_clear();
+        
+        });
+    });
+    
     //Deleting an item
     $("#posts_to_do_list_content").delegate(".item_delete", "click", function(e) {
         e.preventDefault();
+        
+        var agree = confirm("You are about to delete the selected item permanently. Are you sure you want to continue?");
+        if (! agree)
+        	return false;
         
         posts_to_do_list_content_loading();
         
@@ -87,6 +172,7 @@ jQuery(document).ready(function($) {
                 $("#posts_to_do_list_content_error").css("display", "block");
             } else {
                 clicked_item.closest(".item_to_do").fadeOut();
+                posts_to_do_list_reload_current_page();
             }
         
             posts_to_do_list_content_loading_clear();
@@ -158,6 +244,7 @@ jQuery(document).ready(function($) {
         } else {
             $("#posts_to_do_list_new_content").slideDown();
         }
+        
         //Prevent link loading
         e.preventDefault();
     });
