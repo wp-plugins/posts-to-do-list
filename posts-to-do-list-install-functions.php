@@ -3,7 +3,7 @@
 class posts_to_do_list_install extends posts_to_do_list_core {
     
     //Called on activation. Creates table and option
-    function posts_to_do_list_install() {
+    static function posts_to_do_list_do_install() {
         global $wpdb;
         
         //If working on a multisite blog
@@ -31,7 +31,7 @@ class posts_to_do_list_install extends posts_to_do_list_core {
     }
     
     //Called when creating a new blog on multiste. If plugin was activated with a network-wide activation, activate and install it on the new blog too
-    function posts_to_do_list_new_blog_install( $blog_id, $user_id, $domain, $path, $site_id, $meta ) {
+    static function posts_to_do_list_new_blog_install( $blog_id, $user_id, $domain, $path, $site_id, $meta ) {
         global $wpdb;
         
     	if ( is_plugin_active_for_network( basename( __DIR__ ).'/posts-to-do-list.php' ) ) {
