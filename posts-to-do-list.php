@@ -4,7 +4,7 @@ Plugin Name: Posts To Do List
 Plugin URI: http://www.thecrowned.org/posts-to-do-list
 Description: Share post ideas with your blog writers, suggest them what to write and keep track of all the posts ideas in a convenient to do list. Do not lose post ideas, keep them!
 Author: Stefano Ottolenghi
-Version: 0.8.1
+Version: 0.8
 Author URI: http://www.thecrowned.org/
 */
 
@@ -33,7 +33,7 @@ class posts_to_do_list_core {
         global $wpdb;
         
         self::$posts_to_do_list_ajax_loader = plugins_url( 'style/images/ajax-loader.gif', __FILE__ );
-        self::$newest_version               = '0.8.1';
+        self::$newest_version               = '0.8';
         self::$posts_to_do_list_db_table    = $wpdb->prefix.'posts_to_do_list';
         
         //If table does not exist, create it 
@@ -368,7 +368,8 @@ class posts_to_do_list_core {
         $new_settings['current_version']    = self::$posts_to_do_list_options['current_version'];
         
         //General settings box
-        $new_settings['items_per_page']     = (int) trim( $_POST['items_per_page'] );
+        $new_settings['items_per_page']                     = (int) trim( $_POST['items_per_page'] );
+        $new_settings['send_email_users_on_assignment']     = posts_to_do_list_options_functions::determine_checkbox_value( @$_POST['send_email_users_on_assignment'] );
         
         if( $_POST['publication_time_range'] == 'custom' )
             $new_settings['publication_time_range'] = (int) $_POST['publication_time_range_custom_value'];
@@ -444,6 +445,8 @@ class posts_to_do_list_core {
         </span>
         <label for="items_per_page">Number of items to display per page:</label>
         <input type="text" id="items_per_page" name="items_per_page" size="5" value="<?php echo self::$posts_to_do_list_options['items_per_page']; ?>" />
+        
+        <?php posts_to_do_list_options_functions::print_p_field( 'Send email to users when a post is assigned to them', self::$posts_to_do_list_options['send_email_users_on_assignment'], 'checkbox', 'send_email_users_on_assignment', 'If checked, when a new post is assigned to a user, they will receive an email with the related details.' ); ?>
         
         <div class="section_title">Publication time range</div>
         <p style="height: 10px;">
@@ -738,6 +741,45 @@ class posts_to_do_list_core {
         }
         
         posts_to_do_list_print_functions::posts_to_do_list_print_detailed_stats( $detailed_stats_array );
+    }
+    
+    //Given a numerical representation of the post priority, returns the correspondant textual one
+    function posts_to_do_list_get_textual_priority( $numeric_priority ) {
+        //Need to store them as numbers in the db cause otherwise it would not be possible to sort for item_priority DESC
+        $priority_values_to_text = array(
+            '1' => 'Lower than hell',
+            '2' => 'Lowest',
+            '3' => 'Low',
+            '4' => 'Normal',
+            '5' => 'High',
+            '6' => 'Highest',
+            '7' => 'A matter of life and death'
+        );
+        
+        return $item_priority = $priority_values_to_text[$numeric_priority];
+    }
+    
+    //When a new post is added and assigned to some user, send email to them with the details of the new item
+    function posts_to_do_list_send_email_assignment( $insert_data ) {
+        $blog_name      = get_bloginfo( 'name' );
+        $blog_URL       = site_url();
+        $email_receiver = get_userdata( $insert_data['item_author'] )->user_email; 
+        $email_subject  = $blog_name.': new post assigned';
+        $email_text     = 'You are receiving this email because you are a writer at <a href="'.$blog_URL.'" title="'.$blog_name.'">'.$blog_name.'</a> and a new post was added to the list of the to-do ones. And... guess what! You are the lucky winner of that new post to write: in fact, it was assigned to you. Following are details of that new item.<br /><br />
+<strong><a href="'.$insert_data['item_url'].'" title="'.$insert_data['item_title'].'">'.$insert_data['item_title'].'</a></strong><br /><strong>Inserted</strong>: on '.date( $insert_data['item_timestamp'] ).' by '.$insert_data['item_adder'].'<br /><strong>Priority</strong>: '.self::posts_to_do_list_get_textual_priority( $insert_data['item_priority'] ).'<br /><strong>Keyword</strong>: '.$insert_data['item_keyword'].'<br /><strong>Notes</strong>: '.$insert_data['item_notes'].'<br /><br />
+&rArr; &nbsp;<a href="'.admin_url().'post-new.php?post_title='.$insert_data['item_title'].'" title="Go to an already filled-in draft and start writing!">Write it!</a>';
+                        
+        if( strlen( $insert_data['item_url'] ) > 0 ) {
+            $email_text .= ' &nbsp; &nbsp; &rArr; &nbsp;<a href="'.$insert_data['item_url'].'" title="Go to source" target="_blank">Go to source</a>';
+        }
+        
+        $email_text     .= '<br /><br />Additional actions are available on the blog pages: head to the <a href="'.admin_url().'post-new.php" title="Go to a new blank post">new post page</a> or edit post one and look at the Posts To Do List box on the right, the items specifically assigned to you will be showed first and marked with an asterisk.<br /><br />
+<span style="font-size: smaller">This message was generated automatically by the <a href="http://wordpress.org/extend/plugins/posts-to-do-list/" title="Posts To Do List plugin page">Posts To Do List plugin</a>. If these notification are unwanted, contact your administrator.</span>';
+        $email_headers  = 'From: '.get_option('admin_email')."\r\n";
+        $email_headers  .= 'Content-Type: text/html'."\r\n";
+        
+        
+        mail( $email_receiver, $email_subject, $email_text, $email_headers );
     }
     
 }

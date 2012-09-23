@@ -119,6 +119,12 @@ class posts_to_do_list_ajax_functions extends posts_to_do_list_core {
         );
         
         $wpdb->insert( parent::$posts_to_do_list_db_table, $insert_data );
+        
+        //If setting is enabled and post was assigned to some user, send notification email to them
+        if( parent::$posts_to_do_list_options['send_email_users_on_assignment'] == 1 AND $insert_data['item_author'] != 0 ) {
+            parent::posts_to_do_list_send_email_assignment( $insert_data );
+        }
+        
         exit;
     }
     

@@ -69,17 +69,6 @@ function posts_to_do_list_print_new_item_form() {
     function posts_to_do_list_print_item( $single ) {
         global $current_user;
         
-        //Need to store them as numbers in the db cause otherwise it would not be possible to sort for item_priority DESC
-        $priority_values_to_text = array(
-            '1' => 'Lower than hell',
-            '2' => 'Lowest',
-            '3' => 'Low',
-            '4' => 'Normal',
-            '5' => 'High',
-            '6' => 'Highest',
-            '7' => 'A matter of life and death'
-        );
-        
         $item_title         = stripslashes( $single->item_title );
         $item_title_display = stripslashes( $single->item_title );
         $item_title_style   = ' style="text-decoration: none;"'; //This is the default style
@@ -89,7 +78,7 @@ function posts_to_do_list_print_new_item_form() {
         $item_keyword       = stripslashes( $single->item_keyword );
         $item_notes         = stripslashes( $single->item_notes );
         $item_author        = 'Unassigned'; //This is the default assigment
-        $item_priority      = $priority_values_to_text[$single->item_priority];
+        $item_priority      = parent::posts_to_do_list_get_textual_priority( $single->item_priority );
         $item_done_details  = @unserialize( $single->item_done );
         
         //If item is assigned to current user, highlight that
