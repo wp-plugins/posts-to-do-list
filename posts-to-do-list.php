@@ -4,7 +4,7 @@ Plugin Name: Posts To Do List
 Plugin URI: http://www.thecrowned.org/posts-to-do-list
 Description: Share post ideas with your blog writers, suggest them what to write and keep track of all the posts ideas in a convenient to do list. Do not lose post ideas, keep them!
 Author: Stefano Ottolenghi
-Version: 0.8
+Version: 0.9
 Author URI: http://www.thecrowned.org/
 */
 
@@ -33,7 +33,7 @@ class posts_to_do_list_core {
         global $wpdb;
         
         self::$posts_to_do_list_ajax_loader = plugins_url( 'style/images/ajax-loader.gif', __FILE__ );
-        self::$newest_version               = '0.8';
+        self::$newest_version               = '0.9';
         self::$posts_to_do_list_db_table    = $wpdb->prefix.'posts_to_do_list';
         
         //If table does not exist, create it 
@@ -206,6 +206,7 @@ class posts_to_do_list_core {
         add_meta_box( 'posts_to_do_list_general_options', 'Posts To Do List General Options', array( $this, 'posts_to_do_list_metabox_general_options' ), self::$posts_to_do_list_options_page_slug, 'normal' );
         add_meta_box( 'posts_to_do_list_permissions', 'Posts To Do List Permissions', array( $this, 'posts_to_do_list_metabox_permissions' ), self::$posts_to_do_list_options_page_slug, 'normal' );
         add_meta_box( 'posts_to_do_list_metabox_reset', 'Posts To Do List Reset', array( $this, 'posts_to_do_list_metabox_reset' ), self::$posts_to_do_list_options_page_slug, 'side' );
+        add_meta_box( 'posts_to_do_list_metabox_bulk_purge', 'Purge Marked as Done Items', array( $this, 'posts_to_do_list_metabox_bulk_purge' ), self::$posts_to_do_list_options_page_slug, 'side' );
         add_meta_box( 'posts_to_do_list_support_the_author', 'Support The Author', array( $this, 'posts_to_do_list_metabox_support_the_author' ), self::$posts_to_do_list_options_page_slug, 'side' );
         
         //And this is for the tooltips
@@ -353,16 +354,29 @@ class posts_to_do_list_core {
         global $wpdb;
         
         //Nonce check
-        check_admin_referer( 'posts_to_do_list_reset', 'posts_to_do_list_reset' );
+        check_admin_referer( 'nonce_posts_to_do_list_reset', 'nonce_posts_to_do_list_reset' );
         
         $wpdb->query( 'DELETE FROM '.self::$posts_to_do_list_db_table );
+        
         echo '<div id="message" class="updated fade"><p><strong>Posts To Do List records deleted.</strong> <a href="'.admin_url( self::$posts_to_do_list_dashboard_page_link ).'">Go to the dashboard page &raquo;</a></p></div>';
+    }
+    
+    //Deletes each item that was marked as done from the plugin table
+    function posts_to_do_list_bulk_purge() {
+        global $wpdb;
+        
+        //Nonce check
+        check_admin_referer( 'nonce_posts_to_do_list_bulk_purge', 'nonce_posts_to_do_list_bulk_purge' );
+        
+        $wpdb->query( 'DELETE FROM '.self::$posts_to_do_list_db_table.' WHERE item_done IS NOT NULL' );
+        
+        echo '<div id="message" class="updated fade"><p><strong>Posts To Do List marked as done items deleted.</strong> <a href="'.admin_url( self::$posts_to_do_list_dashboard_page_link ).'">Go to the dashboard page &raquo;</a></p></div>';
     }
     
     //Saves sent options
     function posts_to_do_list_options_save( $_POST ) {
         //Nonce check
-        check_admin_referer( 'posts_to_do_list_main_form_update', 'posts_to_do_list_main_form_update' );
+        check_admin_referer( 'nonce_posts_to_do_list_main_form_update', 'nonce_posts_to_do_list_main_form_update' );
         
         $new_settings                       = array();
         $new_settings['current_version']    = self::$posts_to_do_list_options['current_version'];
@@ -410,15 +424,18 @@ class posts_to_do_list_core {
         if( isset( $_POST['posts_to_do_list_options_save'] ) )
             self::posts_to_do_list_options_save( $_POST );
         else if( isset( $_POST['posts_to_do_list_reset_button'] ) )
-            self::posts_to_do_list_bulk_delete(); ?>
+            self::posts_to_do_list_bulk_delete();
+        else if( isset( $_POST['posts_to_do_list_bulk_purge'] ) )
+            self::posts_to_do_list_bulk_purge(); ?>
         
             <h2>Posts To Do List Options</h2>
             <p>From this page you can configure the Post Pay Counter plug-in. You will find all the information you need inside each following box and, for each available function, clicking on the info icon on the right of them. Generated sta, where you will find many details about each post (its status, date, , images and comments count, payment value) with tons of general statistics and the ability to browse old stats. If you want to be able to see stats since the first published post, use the Update Stats box below.</p>
             <form action="" method="post" id="posts_to_do_list_form">            
         
         <?php //Nonces for major security
-        wp_nonce_field( 'posts_to_do_list_main_form_update', 'posts_to_do_list_main_form_update' );
-        wp_nonce_field( 'posts_to_do_list_reset', 'posts_to_do_list_reset' );
+        wp_nonce_field( 'nonce_posts_to_do_list_main_form_update', 'nonce_posts_to_do_list_main_form_update' );
+        wp_nonce_field( 'nonce_posts_to_do_list_reset', 'nonce_posts_to_do_list_reset' );
+        wp_nonce_field( 'nonce_posts_to_do_list_bulk_purge', 'nonce_posts_to_do_list_bulk_purge' );
         wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false );
         wp_nonce_field( 'meta-box-order', 'meta-box-order-nonce', false ); ?>
         
@@ -536,6 +553,11 @@ class posts_to_do_list_core {
     function posts_to_do_list_metabox_reset() { ?>
         <p>If, for some reason to me unknown, you would like to delete all the posts added to the list with just one click, the button below will do. But do not blame me: <strong>each and every single added item will be unrecoverably deleted</strong>, although your options will not be touched.</p>
         <p style="text-align: center;"><input type="submit" class="button-secondary" name="posts_to_do_list_reset_button" value="I got it. Do it, delete everything!" onclick="javascript:return confirm_reset();" /></p>
+    <?php }
+    
+    function posts_to_do_list_metabox_bulk_purge() { ?>
+        <p>If you would like to delete all the posts that were marked as done with just one click, the button below will do. But do not blame me: <strong>each and every single marked as done item will be unrecoverably deleted</strong>, although your options will not be touched.</p>
+        <p style="text-align: center;"><input type="submit" class="button-secondary" name="posts_to_do_list_bulk_purge" value="Purge marked as done items from list" /></p>
     <?php }
     
     function posts_to_do_list_metabox_stats() {
