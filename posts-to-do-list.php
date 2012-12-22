@@ -4,7 +4,7 @@ Plugin Name: Posts To Do List
 Plugin URI: http://www.thecrowned.org/posts-to-do-list
 Description: Share post ideas with your blog writers, suggest them what to write and keep track of all the posts ideas in a convenient to do list. Do not lose post ideas, keep them!
 Author: Stefano Ottolenghi
-Version: 0.9
+Version: 0.9.1
 Author URI: http://www.thecrowned.org/
 */
 
@@ -33,7 +33,7 @@ class posts_to_do_list_core {
         global $wpdb;
         
         self::$posts_to_do_list_ajax_loader = plugins_url( 'style/images/ajax-loader.gif', __FILE__ );
-        self::$newest_version               = '0.9';
+        self::$newest_version               = '0.9.1';
         self::$posts_to_do_list_db_table    = $wpdb->prefix.'posts_to_do_list';
         
         //If table does not exist, create it 
@@ -107,7 +107,9 @@ class posts_to_do_list_core {
         $wpdb->query( 'ALTER TABLE  `'.self::$posts_to_do_list_db_table.'` CHANGE  `item_url`  `item_url` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NULL' );
         
         self::$posts_to_do_list_options['current_version'] = self::$newest_version;
+        if( ! self::$posts_to_do_list_options['permission_item_unassign_roles'] ) self::$posts_to_do_list_options['permission_item_unassign_roles'] = array();
         update_option( 'posts_to_do_list', self::$posts_to_do_list_options );
+        self::posts_to_do_list_update_options_variable();
     }
     
     //Called after options are somehow changed, it mirrors those changes in the global variable used around

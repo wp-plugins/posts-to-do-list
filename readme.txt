@@ -2,8 +2,8 @@
 Contributors: Ste_95
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4Y4STCU56MUKE
 Tags: multi author, post management, to do list
-Tested up to: 3.4.2
-Stable tag: 0.9
+Tested up to: 3.5
+Stable tag: 0.9.1
 Requires at least: 3.0
 
 Share post ideas with blog writers, suggest them what to write and keep track of the posts ideas with a to do list. Stop losing post ideas, start keeping them!
@@ -31,6 +31,10 @@ Posts To Do List was reviewed by:
 5. That's it, done!
 
 == Changelog ==
+= 0.9.1 =
+* Bugfix: AJAX actions may have triggered PHP warning because of Wordpress change of policy with wpdb->prepare() (actions were still executed, though).
+* Bugfix: new installations missed an option, which resulted in a PHP warning in the Options page for the roles able to unassing items. If you experience this, just check a role for that permission, save, then uncheck it and save again. 
+
 = 0.9 =
 * A new button in the options page allows to delete all the already marked as done items.
 

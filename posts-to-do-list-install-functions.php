@@ -77,8 +77,14 @@ class posts_to_do_list_install extends posts_to_do_list_core {
                     'editor',
                     'administrator'
                 ),
+                'permission_item_unassign_roles'              => array(
+                    'author',
+                    'editor',
+                    'administrator'
+                ),
                 'permission_users_can_see_others_items'     => 1,
-                'publication_time_range'                    => 'month'
+                'publication_time_range'                    => 'month',
+                'send_email_users_on_assignment'            => 1
             ) );
             parent::posts_to_do_list_update_options_variable();
         }

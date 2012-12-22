@@ -41,12 +41,14 @@ class posts_to_do_list_ajax_functions extends posts_to_do_list_core {
         echo posts_to_do_list_print_functions::posts_to_do_list_print_item( $ajax_item_data_array );
         exit;
     }
+    
     //Marks an item as done, storing the marker and the time in which the action happened. If post was already marked as done, it clears the item_done field
     function posts_to_do_list_ajax_mark_as_done() {
         global $wpdb;
         
         //If request was really issued from the plugin
         check_ajax_referer( 'posts_to_do_list_ajax_mark_as_done', 'nonce' );
+        $_REQUEST['item_id'] = (int) $_REQUEST['item_id'];
         
         if( isset( $_REQUEST['checked'] ) AND $_REQUEST['checked'] == 'checked' ) {
             $done_array = array(
@@ -60,7 +62,7 @@ class posts_to_do_list_ajax_functions extends posts_to_do_list_core {
             
             $wpdb->update( self::$posts_to_do_list_db_table, $update_data, array( 'ID' => $_REQUEST['item_id'] ) );
         } else {
-            $wpdb->query( $wpdb->prepare( 'UPDATE '.self::$posts_to_do_list_db_table.' SET item_done = NULL WHERE ID = '.$_REQUEST['item_id'] ) );
+            $wpdb->query( 'UPDATE '.self::$posts_to_do_list_db_table.' SET item_done = NULL WHERE ID = '.$_REQUEST['item_id'] );
         }
         
         exit;
@@ -73,7 +75,7 @@ class posts_to_do_list_ajax_functions extends posts_to_do_list_core {
         //If request was really issued from the plugin
         check_ajax_referer( 'posts_to_do_list_ajax_delete_item', 'nonce' );
         
-        $wpdb->query( $wpdb->prepare( 'DELETE FROM '.self::$posts_to_do_list_db_table.' WHERE ID = '.(int) $_REQUEST['item_id'] ) );
+        $wpdb->query( 'DELETE FROM '.self::$posts_to_do_list_db_table.' WHERE ID = '.(int) $_REQUEST['item_id'] );
         exit;
     }
     
@@ -84,8 +86,9 @@ class posts_to_do_list_ajax_functions extends posts_to_do_list_core {
         
         //If request was really issued from the plugin
         check_ajax_referer( 'posts_to_do_list_ajax_i_ll_take_it', 'nonce' );
+        $_REQUEST['item_id'] = (int) $_REQUEST['item_id'];
         
-        $wpdb->query( $wpdb->prepare( 'UPDATE '.self::$posts_to_do_list_db_table.' SET item_author = '.$current_user->ID.' WHERE ID = '.$_REQUEST['item_id'] ) );
+        $wpdb->query( 'UPDATE '.self::$posts_to_do_list_db_table.' SET item_author = '.$current_user->ID.' WHERE ID = '.$_REQUEST['item_id'] );
         exit;
     }
     
@@ -95,8 +98,9 @@ class posts_to_do_list_ajax_functions extends posts_to_do_list_core {
         
         //If request was really issued from the plugin
         check_ajax_referer( 'posts_to_do_list_ajax_i_dont_want_it_anymore', 'nonce' );
+        $_REQUEST['item_id'] = (int) $_REQUEST['item_id'];
         
-        $wpdb->query( $wpdb->prepare( 'UPDATE '.self::$posts_to_do_list_db_table.' SET item_author = 0 WHERE ID = '.$_REQUEST['item_id'] ) );
+        $wpdb->query( 'UPDATE '.self::$posts_to_do_list_db_table.' SET item_author = 0 WHERE ID = '.$_REQUEST['item_id'] );
         exit;
     }
     
