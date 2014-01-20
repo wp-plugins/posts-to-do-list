@@ -2,7 +2,7 @@
 /*
 Plugin Name: Posts To Do List
 Plugin URI: http://www.thecrowned.org/wordpress-plugin-posts-to-do-list
-Description: Share post ideas with your blog writers, suggest them writing topics and keep track of all the ideas in a convenient to do list. Don't lose post ideas, keep them!
+Description: Share post ideas with writers, suggest them writing topics and keep track of the posts ideas with a to do list.
 Author: Stefano Ottolenghi
 Version: 0.9.3
 Author URI: http://www.thecrowned.org/
