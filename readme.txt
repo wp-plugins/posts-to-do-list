@@ -2,11 +2,11 @@
 Contributors: Ste_95
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4Y4STCU56MUKE
 Tags: multi author, post management, to do list
-Tested up to: 3.5
-Stable tag: 0.9.2
+Tested up to: 3.8
+Stable tag: 0.9.3
 Requires at least: 3.0
 
-Share post ideas with blog writers, suggest them what to write and keep track of the posts ideas with a to do list. Stop losing post ideas, start keeping them!
+Share post ideas with blog writers, suggest them writing topics and keep track of the posts ideas with a to do list. Stop losing post ideas, start keeping them!
 
 == Description ==
 Most people who run a multi-author blog need to tell their writers what post they should write. And so administrators send emails with a URL of the post source, the keyword for the post, any notes accompanying that. And sometimes a user notices a post that is worth writing and he wants to tell the other writers, so they have to email the administrator who will tell the other users and everyone will kill themselves in the end. The Posts To Do List plugin allows you to get rid of that rigmarole.
@@ -31,6 +31,9 @@ Posts To Do List was reviewed by:
 5. That's it, done!
 
 == Changelog ==
+= 0.9.3 =
+* Fixed a bug which resulted in a fatal error due to PHP 5.4 incompatibility. Sorry!
+
 = 0.9.2 =
 * Updated the plugin URI, which pointed to a non-existent page.
 

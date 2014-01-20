@@ -2,9 +2,9 @@
 /*
 Plugin Name: Posts To Do List
 Plugin URI: http://www.thecrowned.org/wordpress-plugin-posts-to-do-list
-Description: Share post ideas with your blog writers, suggest them what to write and keep track of all the posts ideas in a convenient to do list. Do not lose post ideas, keep them!
+Description: Share post ideas with your blog writers, suggest them writing topics and keep track of all the ideas in a convenient to do list. Don't lose post ideas, keep them!
 Author: Stefano Ottolenghi
-Version: 0.9.2
+Version: 0.9.3
 Author URI: http://www.thecrowned.org/
 */
 
@@ -33,7 +33,7 @@ class posts_to_do_list_core {
         global $wpdb;
         
         self::$posts_to_do_list_ajax_loader = plugins_url( 'style/images/ajax-loader.gif', __FILE__ );
-        self::$newest_version               = '0.9.1';
+        self::$newest_version               = '0.9.3';
         self::$posts_to_do_list_db_table    = $wpdb->prefix.'posts_to_do_list';
         
         //If table does not exist, create it 
@@ -376,7 +376,7 @@ class posts_to_do_list_core {
     }
     
     //Saves sent options
-    function posts_to_do_list_options_save( $_POST ) {
+    function posts_to_do_list_options_save( $post_data ) {
         //Nonce check
         check_admin_referer( 'nonce_posts_to_do_list_main_form_update', 'nonce_posts_to_do_list_main_form_update' );
         
@@ -384,19 +384,19 @@ class posts_to_do_list_core {
         $new_settings['current_version']    = self::$posts_to_do_list_options['current_version'];
         
         //General settings box
-        $new_settings['items_per_page']                     = (int) trim( $_POST['items_per_page'] );
-        $new_settings['send_email_users_on_assignment']     = posts_to_do_list_options_functions::determine_checkbox_value( @$_POST['send_email_users_on_assignment'] );
+        $new_settings['items_per_page']                     = (int) trim( $post_data['items_per_page'] );
+        $new_settings['send_email_users_on_assignment']     = posts_to_do_list_options_functions::determine_checkbox_value( @$post_data['send_email_users_on_assignment'] );
         
-        if( $_POST['publication_time_range'] == 'custom' )
-            $new_settings['publication_time_range'] = (int) $_POST['publication_time_range_custom_value'];
+        if( $post_data['publication_time_range'] == 'custom' )
+            $new_settings['publication_time_range'] = (int) $post_data['publication_time_range_custom_value'];
         else
-            $new_settings['publication_time_range'] = $_POST['publication_time_range'];
+            $new_settings['publication_time_range'] = $post_data['publication_time_range'];
         
         //Permissions box: for the roles, it cycles through the POST data and find all the fields that were sent to add them to the serialized array
         $permission_new_item_add_roles  = array();
         $permission_item_delete_roles   = array();
         $permission_item_unassign_roles = array();
-        foreach( $_POST as $key => $value ) {
+        foreach( $post_data as $key => $value ) {
             if( strpos( $key, 'permission_new_item_add_' ) === 0 )
                 $permission_new_item_add_roles[] = $value;
                 
@@ -410,7 +410,7 @@ class posts_to_do_list_core {
         $new_settings['permission_new_item_add_roles']          = $permission_new_item_add_roles;
         $new_settings['permission_item_delete_roles']           = $permission_item_delete_roles;
         $new_settings['permission_item_unassign_roles']         = $permission_item_unassign_roles;
-        $new_settings['permission_users_can_see_others_items']  = posts_to_do_list_options_functions::determine_checkbox_value( @$_POST['permission_users_can_see_others_items'] );
+        $new_settings['permission_users_can_see_others_items']  = posts_to_do_list_options_functions::determine_checkbox_value( @$post_data['permission_users_can_see_others_items'] );
         
         //Options update
         update_option( 'posts_to_do_list', $new_settings );
