@@ -4,7 +4,7 @@ Plugin Name: Posts To Do List
 Plugin URI: http://www.thecrowned.org/wordpress-plugin-posts-to-do-list
 Description: Share post ideas with writers, suggest them writing topics and keep track of the posts ideas with a to do list.
 Author: Stefano Ottolenghi
-Version: 0.9.3
+Version: 0.94
 Author URI: http://www.thecrowned.org/
 */
 
@@ -33,7 +33,7 @@ class posts_to_do_list_core {
         global $wpdb;
         
         self::$posts_to_do_list_ajax_loader = plugins_url( 'style/images/ajax-loader.gif', __FILE__ );
-        self::$newest_version               = '0.9.3';
+        self::$newest_version               = '0.94';
         self::$posts_to_do_list_db_table    = $wpdb->prefix.'posts_to_do_list';
         
         //If table does not exist, create it 
@@ -120,7 +120,7 @@ class posts_to_do_list_core {
     function posts_to_do_list_menus() {
         self::$posts_to_do_list_options_page_slug   = add_options_page( 'Posts To Do List Options', 'Posts To Do List Options', 'manage_options', 'posts_to_do_list_options', array( $this, 'posts_to_do_list_options' ) );
         self::$posts_to_do_list_options_page_link   = 'admin.php?page=posts_to_do_list_options';
-        self::$posts_to_do_list_dashboard_page_slug = add_dashboard_page( "Posts To Do List", "Posts To Do List", 'manage_options', 'posts_to_do_list', array( $this, 'posts_to_do_list_dashboard' ));
+        self::$posts_to_do_list_dashboard_page_slug = add_dashboard_page( "Posts To Do List", "Posts To Do List", 'edit_posts', 'posts_to_do_list', array( $this, 'posts_to_do_list_dashboard' ));
         self::$posts_to_do_list_dashboard_page_link = 'index.php?page=posts_to_do_list';
     }
     

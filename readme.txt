@@ -31,6 +31,9 @@ Posts To Do List was reviewed by:
 5. That's it, done!
 
 == Changelog ==
+= 0.94 =
+* Dashboard page now visible to all users with the capability edit_posts.
+
 = 0.9.3 =
 * Fixed a bug which resulted in a fatal error due to PHP 5.4 incompatibility. Sorry!
 
