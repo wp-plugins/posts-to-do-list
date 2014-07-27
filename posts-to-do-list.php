@@ -4,7 +4,7 @@ Plugin Name: Posts To Do List
 Plugin URI: http://www.thecrowned.org/wordpress-plugin-posts-to-do-list
 Description: Share post ideas with writers, suggest them writing topics and keep track of the posts ideas with a to do list.
 Author: Stefano Ottolenghi
-Version: 0.94
+Version: 0.95
 Author URI: http://www.thecrowned.org/
 */
 
@@ -33,7 +33,7 @@ class posts_to_do_list_core {
         global $wpdb;
         
         self::$posts_to_do_list_ajax_loader = plugins_url( 'style/images/ajax-loader.gif', __FILE__ );
-        self::$newest_version               = '0.94';
+        self::$newest_version               = '0.95';
         self::$posts_to_do_list_db_table    = $wpdb->prefix.'posts_to_do_list';
         
         //If table does not exist, create it 
@@ -83,6 +83,7 @@ class posts_to_do_list_core {
         
         //Manage AJAX calls
         add_action( 'wp_ajax_posts_to_do_list_ajax_retrieve_title', array( 'posts_to_do_list_ajax_functions', 'posts_to_do_list_ajax_retrieve_title' ) );
+		add_action( 'wp_ajax_posts_to_do_list_ajax_get_users_by_role', array( 'posts_to_do_list_ajax_functions', 'posts_to_do_list_ajax_get_users_by_role' ) );
         add_action( 'wp_ajax_posts_to_do_list_ajax_new_item_submit', array( 'posts_to_do_list_ajax_functions', 'posts_to_do_list_ajax_new_item_add' ) );
         add_action( 'wp_ajax_posts_to_do_list_ajax_print_item_after_adding', array( 'posts_to_do_list_ajax_functions', 'posts_to_do_list_ajax_print_item_after_adding' ) );
         add_action( 'wp_ajax_posts_to_do_list_ajax_mark_as_done', array( 'posts_to_do_list_ajax_functions', 'posts_to_do_list_ajax_mark_as_done' ) );
@@ -232,6 +233,7 @@ class posts_to_do_list_core {
             'nonce_posts_to_do_list_ajax_delete_item'               => wp_create_nonce( 'posts_to_do_list_ajax_delete_item' ),
             'nonce_posts_to_do_list_ajax_get_page'                  => wp_create_nonce( 'posts_to_do_list_ajax_get_page' ),
             'nonce_posts_to_do_list_ajax_retrieve_title'            => wp_create_nonce( 'posts_to_do_list_ajax_retrieve_title' ),
+			'nonce_posts_to_do_list_ajax_get_users_by_role'			=> wp_create_nonce( 'posts_to_do_list_ajax_get_users_by_role' ),
             'nonce_posts_to_do_list_ajax_new_item_add'              => wp_create_nonce( 'posts_to_do_list_ajax_new_item_add' ),
             'nonce_posts_to_do_list_ajax_print_item_after_adding'   => wp_create_nonce( 'posts_to_do_list_ajax_print_item_after_adding' )
         ) );

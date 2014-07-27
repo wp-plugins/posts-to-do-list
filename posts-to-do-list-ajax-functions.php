@@ -23,6 +23,33 @@ class posts_to_do_list_ajax_functions extends posts_to_do_list_core {
         die( ucfirst( trim( html_entity_decode( $new_item_title[1], ENT_QUOTES, 'UTF-8' ) ) ) );
     }
     
+	//Retrieve users belonging to given user role
+	function posts_to_do_list_ajax_get_users_by_role() {
+		check_ajax_referer( 'posts_to_do_list_ajax_get_users_by_role', 'nonce' );
+        
+        $args = array( 
+            'orderby' => 'display_name', 
+            'order' => 'ASC', 
+            'role' => $_REQUEST['user_role'], 
+            'count_total' => true, 
+            'fields' => array( 
+                'ID', 
+                'display_name' 
+            ) 
+        );
+        $args = apply_filters( 'ptdl_get_users_by_role_args', $args );
+        
+        $users_to_show = new WP_User_Query( $args );
+		if( $users_to_show->get_total() == 0 )
+            die( 'Error: No users found.' );
+        
+		$html = '<option value="0" selected>Unassigned</option>';
+		foreach( $users_to_show->results as $single )
+			$html .= '<option value="'.$single->ID.'">'.$single->display_name.'</option>';
+		
+		die( $html );
+	}
+	
     //After an item is added, it returns its HTML by print_item to be shown. Only the timestamp and the item_id are missing from the js data, thus they are added here
     function posts_to_do_list_ajax_print_item_after_adding() {
         global $wpdb;

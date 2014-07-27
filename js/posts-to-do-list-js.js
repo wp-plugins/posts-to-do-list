@@ -286,6 +286,30 @@ jQuery(document).ready(function($) {
     $("#new_item_notes").focusin(function() {
         $("#new_item_notes").attr("rows", "5");
     });
+	
+	//AJAX for role selection and related users retrieval
+    $("#posts_to_do_list_roles").bind("change", function () {
+        
+        $("#new_item_loading").css("display", "inline");
+        $("#new_item_error").empty();
+        
+        var data = {
+            action:         "posts_to_do_list_ajax_get_users_by_role",
+            user_role:   	$("#posts_to_do_list_roles").val(),
+            nonce:          posts_to_do_list_vars.nonce_posts_to_do_list_ajax_get_users_by_role
+        };
+            
+        $.post(decodeURIComponent(posts_to_do_list_vars.ajax_url), data, function(response) {
+            
+            if(response.indexOf("Error:") != -1) {
+                $("#new_item_error").html(response.substr(6));
+            } else {
+                $("#posts_to_do_list_author").empty().append(response);
+            }
+            
+            $("#new_item_loading").css("display", "none");
+        });
+    });
     
     //When item is sent for adding, issue an AJAX request
     $("#new_item_submit").click(function (e) {

@@ -3,7 +3,7 @@
 class posts_to_do_list_print_functions extends posts_to_do_list_core {
     
 function posts_to_do_list_print_new_item_form() {
-        global $wpdb; ?>
+        global $wpdb, $wp_roles; ?>
 <div style="text-align: center;"><a href="#" title="Add new entry" id="posts_to_do_list_new">Add new post</a></div>
 <div id="posts_to_do_list_new_content" style="display: none;">
     <br />
@@ -21,8 +21,21 @@ function posts_to_do_list_print_new_item_form() {
             <label for="new_item_notes" style="font-weight: bold; font-size: bigger;">New item notes</label><br />
             <textarea rows="2" name="new_item_notes" id="new_item_notes" style="margin-bottom: 10px; width: 250px;" /></textarea>
             <br />
-            <label for="posts_to_do_list_author" style="font-weight: bold; font-size: bigger;">Assign post to specific user</label><br />
-            <select id="posts_to_do_list_author">
+			<div style="margin-bottom: 5px;">
+				<label for="posts_to_do_list_author" style="font-weight: bold; font-size: bigger;">Assign post to specific user</label><br />
+				Role <select id="posts_to_do_list_roles" style="margin-top: 10px;">
+					<option value="0">Any</option>
+					
+					<?php
+					foreach( $wp_roles->role_names as $role => $role_name )
+						echo '<option value="'.$role.'">'.$role_name.'</option>';
+					?>
+					
+				</select>
+				
+			</div>
+			
+			User <select id="posts_to_do_list_author">
                 <option value="0">Unassigned</option>
             
         <?php $all_users = $wpdb->get_results( 'SELECT ID, display_name FROM '.$wpdb->users.' ORDER BY display_name ASC' );

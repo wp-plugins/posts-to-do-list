@@ -3,7 +3,7 @@ Contributors: Ste_95
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4Y4STCU56MUKE
 Tags: multi author, post management, to do list
 Tested up to: 3.9
-Stable tag: 0.9.3
+Stable tag: 0.95
 Requires at least: 3.0
 
 Share post ideas with writers, suggest them writing topics and keep track of the posts ideas with a to do list.
@@ -31,6 +31,9 @@ Posts To Do List was reviewed by:
 5. That's it, done!
 
 == Changelog ==
+= 0.95 =
+* When assigning items, users can be filtered by user role.
+
 = 0.94 =
 * Dashboard page now visible to all users with the capability edit_posts.
 
