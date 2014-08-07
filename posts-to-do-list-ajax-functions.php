@@ -115,6 +115,19 @@ class posts_to_do_list_ajax_functions extends posts_to_do_list_core {
         check_ajax_referer( 'posts_to_do_list_ajax_i_ll_take_it', 'nonce' );
         $_REQUEST['item_id'] = (int) $_REQUEST['item_id'];
         
+        //PERMISSION CHECKS - Only for non-admins
+        if( ! in_array( 'administrator', $current_user->roles ) ) {
+            //Check user doesn't have pending assignment, if they're supposed to finish them before
+            $cu_pending_items = $wpdb->get_var( 'SELECT ID FROM '.self::$posts_to_do_list_db_table.' WHERE item_author = '.$current_user->ID.' AND item_done IS NULL' );
+            if( ! self::$posts_to_do_list_options['permission_users_can_be_greedy'] AND $cu_pending_items != NULL )
+                die( 'Ooops! Don\'t get greedy, you still have an assignment pending!' );
+            
+            //Check user is not claiming other people's posts, if they're not supposed to
+            $item_author = $wpdb->get_var( 'SELECT item_author FROM '.self::$posts_to_do_list_db_table.' WHERE ID = '.$_REQUEST['item_id'] );
+            if( ! self::$posts_to_do_list_options['permission_users_can_claim_others_items'] AND $item_author != 0 )
+                die( 'Ooops! Looks like this post has already been taken!' );
+        }
+        
         $wpdb->query( 'UPDATE '.self::$posts_to_do_list_db_table.' SET item_author = '.$current_user->ID.' WHERE ID = '.$_REQUEST['item_id'] );
         exit;
     }

@@ -1,9 +1,9 @@
 ﻿=== Posts To Do List ===
 Contributors: Ste_95
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4Y4STCU56MUKE
-Tags: multi author, post management, to do list
-Tested up to: 3.9
-Stable tag: 0.9.5
+Tags: multi author, post management, to do list, posts
+Tested up to: 3.9.2
+Stable tag: 0.9.6
 Requires at least: 3.0
 
 Share post ideas with writers, suggest them writing topics and keep track of the posts ideas with a to do list.
@@ -31,6 +31,10 @@ Posts To Do List was reviewed by:
 5. That's it, done!
 
 == Changelog ==
+= 0.9.6 =
+* New option to prevent non-admins from claiming posts already assigned to other users (works in real time: if a post is claimed and another user tries to claim one second later because it still displays as unassigned, an error occurs).
+* New option to prevent non-admins from claiming a post if they have not completed their latest assignment.
+
 = 0.9.5 =
 * When assigning items, users can be filtered by user role.
 

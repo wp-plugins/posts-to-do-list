@@ -4,7 +4,7 @@ Plugin Name: Posts To Do List
 Plugin URI: http://www.thecrowned.org/wordpress-plugin-posts-to-do-list
 Description: Share post ideas with writers, suggest them writing topics and keep track of the posts ideas with a to do list.
 Author: Stefano Ottolenghi
-Version: 0.9.5
+Version: 0.9.6
 Author URI: http://www.thecrowned.org/
 */
 
@@ -33,7 +33,7 @@ class posts_to_do_list_core {
         global $wpdb;
         
         self::$posts_to_do_list_ajax_loader = plugins_url( 'style/images/ajax-loader.gif', __FILE__ );
-        self::$newest_version               = '0.9.5';
+        self::$newest_version               = '0.9.6';
         self::$posts_to_do_list_db_table    = $wpdb->prefix.'posts_to_do_list';
         
         //If table does not exist, create it 
@@ -108,7 +108,11 @@ class posts_to_do_list_core {
         $wpdb->query( 'ALTER TABLE  `'.self::$posts_to_do_list_db_table.'` CHANGE  `item_url`  `item_url` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NULL' );
         
         self::$posts_to_do_list_options['current_version'] = self::$newest_version;
+        
         if( ! self::$posts_to_do_list_options['permission_item_unassign_roles'] ) self::$posts_to_do_list_options['permission_item_unassign_roles'] = array();
+        if( ! self::$posts_to_do_list_options['permission_users_can_claim_others_items'] ) self::$posts_to_do_list_options['permission_users_can_claim_others_items'] = 1;
+        if( ! self::$posts_to_do_list_options['permission_users_can_be_greedy'] ) self::$posts_to_do_list_options['permission_users_can_be_greedy'] = 1;
+        
         update_option( 'posts_to_do_list', self::$posts_to_do_list_options );
         self::posts_to_do_list_update_options_variable();
     }
@@ -413,6 +417,8 @@ class posts_to_do_list_core {
         $new_settings['permission_item_delete_roles']           = $permission_item_delete_roles;
         $new_settings['permission_item_unassign_roles']         = $permission_item_unassign_roles;
         $new_settings['permission_users_can_see_others_items']  = posts_to_do_list_options_functions::determine_checkbox_value( @$post_data['permission_users_can_see_others_items'] );
+        $new_settings['permission_users_can_claim_others_items']= posts_to_do_list_options_functions::determine_checkbox_value( @$post_data['permission_users_can_claim_others_items'] );
+        $new_settings['permission_users_can_be_greedy']         = posts_to_do_list_options_functions::determine_checkbox_value( @$post_data['permission_users_can_be_greedy'] );
         
         //Options update
         update_option( 'posts_to_do_list', $new_settings );
@@ -512,7 +518,9 @@ class posts_to_do_list_core {
         if ( ! isset($wp_roles) )
             $wp_roles = new WP_Roles();
         
-        posts_to_do_list_options_functions::print_p_field( 'Non-administrator users can see posts assigned to other users', self::$posts_to_do_list_options['permission_users_can_see_others_items'], 'checkbox', 'permission_users_can_see_others_items', 'If checked, normal users will not only see posts assigned to themselves, but also the ones assigned to other users. Unassigned posts will be shown anyway.' ); ?>
+        posts_to_do_list_options_functions::print_p_field( 'Non-administrator users can see posts assigned to other users', self::$posts_to_do_list_options['permission_users_can_see_others_items'], 'checkbox', 'permission_users_can_see_others_items', 'If checked, normal users will not only see posts assigned to themselves, but also the ones assigned to other users. Unassigned posts will be shown anyway.' ); 
+        posts_to_do_list_options_functions::print_p_field( 'Non-administrator users can claim posts already assigned to other users', self::$posts_to_do_list_options['permission_users_can_claim_others_items'], 'checkbox', 'permission_users_can_claim_others_items', 'If checked, normal users will not only be able to claim posts that have already been assigned to or claimed by other users.' );
+        posts_to_do_list_options_functions::print_p_field( 'Non-administrator users can claim posts while they still have assigned non-completed posts', self::$posts_to_do_list_options['permission_users_can_be_greedy'], 'checkbox', 'permission_users_can_be_greedy', 'If checked, normal users will not able to claim a post even if they have not completed their previous assignment.' ); ?>
         
         <span class="tooltip_span">
             <img src="<?php echo plugins_url( 'style/images/info.png', __FILE__ ); ?>" title="Only users belonging to one of the checked user roles will be able to add posts to the list." class="tooltip_container" />

@@ -83,6 +83,8 @@ class posts_to_do_list_install extends posts_to_do_list_core {
                     'administrator'
                 ),
                 'permission_users_can_see_others_items'     => 1,
+				'permission_users_can_claim_others_items' 	=> 0,
+				'permission_users_can_be_greedy'			=> 1,
                 'publication_time_range'                    => 'month',
                 'send_email_users_on_assignment'            => 1
             ) );
