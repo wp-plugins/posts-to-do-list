@@ -2,8 +2,8 @@
 Contributors: Ste_95
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4Y4STCU56MUKE
 Tags: multi author, post management, to do list, posts
-Tested up to: 3.9.2
-Stable tag: 0.9.6
+Tested up to: 4.0
+Stable tag: 0.96
 Requires at least: 3.0
 
 Share post ideas with writers, suggest them writing topics and keep track of the posts ideas with a to do list.

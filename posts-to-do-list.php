@@ -4,7 +4,7 @@ Plugin Name: Posts To Do List
 Plugin URI: http://www.thecrowned.org/wordpress-plugin-posts-to-do-list
 Description: Share post ideas with writers, suggest them writing topics and keep track of the posts ideas with a to do list.
 Author: Stefano Ottolenghi
-Version: 0.9.6
+Version: 0.96
 Author URI: http://www.thecrowned.org/
 */
 
@@ -33,7 +33,7 @@ class posts_to_do_list_core {
         global $wpdb;
         
         self::$posts_to_do_list_ajax_loader = plugins_url( 'style/images/ajax-loader.gif', __FILE__ );
-        self::$newest_version               = '0.9.6';
+        self::$newest_version               = '0.96';
         self::$posts_to_do_list_db_table    = $wpdb->prefix.'posts_to_do_list';
         
         //If table does not exist, create it 
