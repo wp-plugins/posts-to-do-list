@@ -2,7 +2,7 @@
 Contributors: Ste_95
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4Y4STCU56MUKE
 Tags: multi author, post management, to do list, posts
-Tested up to: 4.2
+Tested up to: 4.3
 Stable tag: 0.96
 Requires at least: 3.0
 
